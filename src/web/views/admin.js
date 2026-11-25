@@ -699,7 +699,7 @@ export function reviewView({ ctx, manga, submission, pages, approvals, checklist
             <button class="btn btn--primary" type="submit">Salvar balões</button>
           </form>
           <form method="post" action="/admin/revisao/${manga.id}/pagina/${balloonPage.id}/refazer-baloes" data-confirm="Refazer o layout substitui as posições e o tamanho do texto desta página pelo cálculo atual. A versão de agora fica no histórico.">
-            ${csrf(ctx)}
+            ${csrfField(ctx)}
             <button class="btn" type="submit">Refazer layout</button>
             <p class="hint">Recalcula posição e corpo do texto a partir do roteiro. Não gera arte nem custa nada.</p>
           </form>
