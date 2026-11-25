@@ -1,0 +1,9 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150' width='200' height='150' role='img' aria-label='Amostra do estilo Slice of life'><defs>
+ <pattern id='h' width='6' height='6' patternUnits='userSpaceOnUse'><circle cx='1.5' cy='1.5' r='1.4' fill='#52796F' opacity='.35'/></pattern>
+ <pattern id='h2' width='4' height='4' patternUnits='userSpaceOnUse' patternTransform='rotate(35)'><circle cx='1' cy='1' r='1' fill='#52796F' opacity='.3'/></pattern>
+</defs><rect width='200' height='150' fill='#FAEDCD'/><rect y='96' width='200' height='54' fill='#DDB892' opacity='.4'/>
+   <rect x='20' y='44' width='46' height='54' fill='none' stroke='#52796F' stroke-width='2.4'/><rect x='140' y='54' width='40' height='44' fill='none' stroke='#52796F' stroke-width='2.4'/>
+   <circle cx='100' cy='74' r='30' fill='#FAEDCD' stroke='#141414' stroke-width='3'/>
+ <path d='M70 66.5 q30 -33 60 0 q-18 -10.5 -60 0 z' fill='#141414'/>
+ <circle cx='89.5' cy='74' r='3.3' fill='#141414'/><circle cx='110.5' cy='74' r='3.3' fill='#141414'/>
+ <path d='M92.5 86.6 q7.5 6.6 15 0' stroke='#141414' stroke-width='2.4' fill='none' stroke-linecap='round'/><rect width='200' height='150' fill='none' stroke='#52796F' stroke-width='2'/></svg>

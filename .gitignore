@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+data/
+!data/.gitkeep
+storage/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+coverage/
+.DS_Store
+test-results/
+playwright-report/

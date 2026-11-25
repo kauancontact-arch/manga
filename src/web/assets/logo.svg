@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="MangaLoop">
+  <defs>
+    <pattern id="ml-dots" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.4" r="1.1" fill="#F8F5ED" opacity=".3"/>
+    </pattern>
+  </defs>
+  <circle cx="60" cy="60" r="57" fill="#141414" stroke="#F8F5ED" stroke-width="4"/>
+  <path d="M18 74c10-30 34-48 62-50-20 10-34 26-40 44-4 12-10 18-22 6z" fill="#E63946" opacity=".85"/>
+  <circle cx="60" cy="60" r="50" fill="url(#ml-dots)"/>
+  <path d="M22 78c12-6 24-6 36 0V38c-12-6-24-6-36 0z" fill="#F8F5ED" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M98 78c-12-6-24-6-36 0V38c12-6 24-6 36 0z" fill="#F8F5ED" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M60 38v40" stroke="#141414" stroke-width="2.5"/>
+  <path d="M30 48h18M30 56h14M72 48h18M78 56h12" stroke="#141414" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  <path d="M14 66c16 14 76 14 92 0" fill="none" stroke="#E63946" stroke-width="7" stroke-linecap="round"/>
+  <path d="M106 66c-16-14-76-14-92 0" fill="none" stroke="#E63946" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+  <circle cx="60" cy="90" r="4" fill="#E63946"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150' width='200' height='150' role='img' aria-label='Amostra do estilo Chibi / super deformed'><defs>
+ <pattern id='h' width='6' height='6' patternUnits='userSpaceOnUse'><circle cx='1.5' cy='1.5' r='1.4' fill='#141414' opacity='.35'/></pattern>
+ <pattern id='h2' width='4' height='4' patternUnits='userSpaceOnUse' patternTransform='rotate(35)'><circle cx='1' cy='1' r='1' fill='#141414' opacity='.3'/></pattern>
+</defs><rect width='200' height='150' fill='#F8F5ED'/><circle cx='100' cy='80' r='64' fill='#FFC857' opacity='.35'/><circle cx='100' cy='72' r='44' fill='#F8F5ED' stroke='#141414' stroke-width='3'/>
+ <path d='M56 61 q44 -48.400000000000006 88 0 q-26.4 -15.399999999999999 -88 0 z' fill='#141414'/>
+ <ellipse cx='84.6' cy='72' rx='8.8' ry='12.32' fill='#141414'/><ellipse cx='115.4' cy='72' rx='8.8' ry='12.32' fill='#141414'/><circle cx='86.8' cy='68.48' r='3.08' fill='#fff'/><circle cx='117.6' cy='68.48' r='3.08' fill='#fff'/>
+ <path d='M89 90.48 q11 9.68 22 0' stroke='#141414' stroke-width='2.4' fill='none' stroke-linecap='round'/>
+   <path d='M70 128 q30 -16 60 0' stroke='#141414' stroke-width='4' fill='none'/><rect width='200' height='150' fill='none' stroke='#141414' stroke-width='2'/></svg>

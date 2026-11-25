@@ -1,0 +1,10 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150' width='200' height='150' role='img' aria-label='Amostra do estilo Mang&amp;#225; cl&amp;#225;ssico P&amp;B'>
+<defs><pattern id='h' width='7' height='7' patternUnits='userSpaceOnUse'><circle cx='1.6' cy='1.6' r='1.3' fill='#141414' opacity='.30'/></pattern></defs>
+<rect width='200' height='150' fill='#F8F5ED'/>
+<rect x='0' y='0' width='200' height='150' fill='url(#h)' opacity='.5'/>
+<line x1='200' y1='8' x2='168' y2='142' stroke='#141414' stroke-width='2' opacity='.28'/><line x1='187' y1='8' x2='155' y2='142' stroke='#141414' stroke-width='1' opacity='.28'/><line x1='174' y1='8' x2='142' y2='142' stroke='#141414' stroke-width='2' opacity='.28'/><line x1='161' y1='8' x2='129' y2='142' stroke='#141414' stroke-width='1' opacity='.28'/><line x1='148' y1='8' x2='116' y2='142' stroke='#141414' stroke-width='2' opacity='.28'/><line x1='135' y1='8' x2='103' y2='142' stroke='#141414' stroke-width='1' opacity='.28'/><line x1='122' y1='8' x2='90' y2='142' stroke='#141414' stroke-width='2' opacity='.28'/><line x1='109' y1='8' x2='77' y2='142' stroke='#141414' stroke-width='1' opacity='.28'/><line x1='96' y1='8' x2='64' y2='142' stroke='#141414' stroke-width='2' opacity='.28'/>
+<circle cx='96' cy='78' r='36' fill='#F8F5ED' stroke='#141414' stroke-width='3'/>
+<path d='M60 69 q36 -39.6 72 0 q-21.599999999999998 -12.6 -72 0 z' fill='#141414'/>
+<circle cx='83.4' cy='78' r='3.96' fill='#141414'/><circle cx='108.6' cy='78' r='3.96' fill='#141414'/>
+<path d='M87 93.12 q9 7.92 18 0' stroke='#141414' stroke-width='2.4' fill='none' stroke-linecap='round'/>
+<rect width='200' height='150' fill='none' stroke='#141414' stroke-width='2'/></svg>
