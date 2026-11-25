@@ -269,7 +269,7 @@ const MIME = {
 export function serveStatic(ctx, baseDir, relative, { maxAge = 3600 } = {}) {
   const clean = path.normalize(relative).replace(/^(\.\.[/\\])+/, '');
   const full = path.join(baseDir, clean);
-  if (!full.startsWith(path.resolve(baseDir))) { ctx.text('Nao encontrado', 404); return true; }
+  if (!full.startsWith(path.resolve(baseDir))) { ctx.text('Não encontrado', 404); return true; }
   if (!fs.existsSync(full) || !fs.statSync(full).isFile()) return false;
   const body = fs.readFileSync(full);
   const etag = `W/"${crypto.createHash('sha1').update(body).digest('base64url')}"`;
