@@ -200,7 +200,11 @@ function balloonText(b) {
   const style = b.type === 'PENSAMENTO' ? ' font-style="italic"' : '';
   const weight = b.type === 'GRITO' ? '800' : '600';
   return `<text font-family="${FONT_STACK}" font-size="${b.fontSize}" font-weight="${weight}" fill="#141414" text-anchor="${anchor}"${style}>` +
-    lines.map((line, i) => `<tspan x="${tx}" y="${(startY + i * b.fontSize * lineHeight).toFixed(1)}">${escapeHtml(line)}</tspan>`).join('') +
+    // O espaço no fim de cada linha menos a última não muda o desenho, porque
+    // o tspan seguinte recomeça num x próprio. Ele existe para quem copia o
+    // texto da página ou o ouve num leitor de tela: sem ele as linhas saem
+    // grudadas, "uma" + "entrega" vira "umaentrega".
+    lines.map((line, i) => `<tspan x="${tx}" y="${(startY + i * b.fontSize * lineHeight).toFixed(1)}">${escapeHtml(i < lines.length - 1 ? `${line} ` : line)}</tspan>`).join('') +
     '</text>';
 }
 
