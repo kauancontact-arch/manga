@@ -17,7 +17,11 @@ export function bootstrapAdmin({ silent = false } = {}) {
 
   if (existing) {
     if (!silent) console.log(`[bootstrap] usuário "${username}" já existe.`);
-    return { created: false, user: existing };
+    if (password) {
+      // O segredo cumpriu o papel dele. Deixá-lo no ambiente é risco sem ganho.
+      console.warn('[bootstrap] ATENÇÃO: ADMIN_INITIAL_PASSWORD continua definida. O administrador já existe, então remova essa variável do ambiente.');
+    }
+    return { created: false, user: existing, leftoverSecret: !!password };
   }
   if (!password) {
     if (!silent) console.warn('[bootstrap] nenhum administrador cadastrado e ADMIN_INITIAL_PASSWORD ausente.');

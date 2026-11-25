@@ -128,7 +128,12 @@ export function aiModeBlockers() {
   return out;
 }
 
-/** Validacao de ambiente para producao. Lanca erro cedo, antes de servir trafego. */
+/**
+ * Validacao de ambiente para producao. Lanca erro cedo, antes de servir trafego.
+ * A senha inicial NAO entra aqui: no primeiro boot em container ela precisa
+ * existir para criar o administrador. O aviso de remove-la vem depois do
+ * bootstrap, em bootstrapAdmin.
+ */
 export function assertProductionEnv() {
   const problems = [];
   if (!env.authSecret || env.authSecret.length < 32) {
@@ -139,9 +144,6 @@ export function assertProductionEnv() {
   }
   if (env.databaseUrl.startsWith('file:') && !env.allowSqliteInProd) {
     problems.push('DATABASE_URL aponta para SQLite. Use PostgreSQL, ou declare ALLOW_SQLITE_IN_PROD=true quando o arquivo estiver em volume persistente.');
-  }
-  if (env.admin.initialPassword) {
-    problems.push('ADMIN_INITIAL_PASSWORD ainda presente no ambiente. Remova apos o bootstrap.');
   }
   if (problems.length) {
     throw new Error('Ambiente de producao invalido:\n - ' + problems.join('\n - '));
