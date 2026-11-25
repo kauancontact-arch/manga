@@ -1,6 +1,7 @@
 import { aiMode, env } from '../../config/env.js';
 import { html, raw } from '../../core/html.js';
 import { allSettings } from '../../core/settings.js';
+import { assetUrl } from '../../core/assets.js';
 
 const FONTS = 'https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap';
 
@@ -71,7 +72,7 @@ ${noindex ? raw('<meta name="robots" content="noindex, nofollow">') : raw('<meta
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
-<link rel="stylesheet" href="/estatico/styles.css">
+<link rel="stylesheet" href="${assetUrl('styles.css')}">
 ${structuredData ? raw(`<script type="application/ld+json">${JSON.stringify(structuredData).replace(/</g, '\\u003c')}</script>`) : ''}
 </head>
 <body class="${bodyClass}">
@@ -134,7 +135,7 @@ ${body}
     </div>
   </div>
 </footer>
-<script src="/estatico/app.js" defer nonce="${ctx?.nonce || ''}"></script>
+<script src="${assetUrl('app.js')}" defer nonce="${ctx?.nonce || ''}"></script>
 </body>
 </html>`;
 }
@@ -167,7 +168,7 @@ export function adminLayout({ title, body, ctx, pathname = '/admin', subtitle = 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS}">
-<link rel="stylesheet" href="/estatico/styles.css">
+<link rel="stylesheet" href="${assetUrl('styles.css')}">
 </head>
 <body>
 <a class="skip-link" href="#admin-conteudo">Pular para o conteúdo</a>
@@ -201,7 +202,7 @@ export function adminLayout({ title, body, ctx, pathname = '/admin', subtitle = 
     ${body}
   </div>
 </div>
-<script src="/estatico/app.js" defer nonce="${ctx?.nonce || ''}"></script>
+<script src="${assetUrl('app.js')}" defer nonce="${ctx?.nonce || ''}"></script>
 </body>
 </html>`;
 }

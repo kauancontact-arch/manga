@@ -6,6 +6,7 @@ import {
   PANEL_DENSITIES, QUALITY_MODES, SUBMISSION_STATUSES, VISUAL_TONES, label, networkLabel,
 } from '../../domain/catalog.js';
 import { formatUsd } from '../../domain/costs.js';
+import { assetUrl } from '../../core/assets.js';
 
 /* ----------------------------- componentes ------------------------------ */
 
@@ -1026,7 +1027,7 @@ export function loginView({ error = null, username = '', nonce = '' }) {
 <link rel="icon" href="/estatico/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="/estatico/styles.css">
+<link rel="stylesheet" href="${assetUrl('styles.css')}">
 </head>
 <body style="background:var(--ink);display:grid;place-items:center;min-height:100vh;padding:1rem">
 <main style="width:min(100%,420px)">
