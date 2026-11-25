@@ -35,7 +35,17 @@ export function wrapText(text, maxWidthPx, fontSize) {
   return lines.length ? lines : [''];
 }
 
-export function measureBalloon(text, { fontSize = 26, maxWidth = 300, padX = 26, padY = 22, lineHeight = 1.28 } = {}) {
+/**
+ * Corpo de texto dos balões.
+ *
+ * A página tem 1000px de largura e é lida num celular de 375px, ou seja, a
+ * 0,375 do tamanho desenhado. Um corpo de 25px vira 9px na tela, que obriga a
+ * dar zoom em toda fala. Os valores abaixo põem o texto perto de 13px no
+ * celular, que é o corpo usual de quadrinho em leitor de telefone.
+ */
+export const CORPO = { fala: 34, grito: 40, narracao: 30 };
+
+export function measureBalloon(text, { fontSize = CORPO.fala, maxWidth = 300, padX = 26, padY = 22, lineHeight = 1.28 } = {}) {
   const lines = wrapText(text, maxWidth - padX * 2, fontSize);
   const longest = lines.reduce((m, l) => Math.max(m, l.length), 0);
   const width = Math.min(maxWidth, Math.max(130, longest * fontSize * CHAR_W + padX * 2));
@@ -96,7 +106,7 @@ export function layoutBalloons(frames, rects) {
     let cursorY = rect.y + 18;
 
     if (frame.narrador) {
-      const box = measureBalloon(frame.narrador, { fontSize: 22, maxWidth: rect.w - 40 });
+      const box = measureBalloon(frame.narrador, { fontSize: CORPO.narracao, maxWidth: rect.w - 40 });
       balloons.push({
         id: `${frame.id}-nar`, frameId: frame.id, type: 'NARRACAO', text: frame.narrador,
         x: rect.x + 18, y: cursorY, w: box.width, h: box.height, fontSize: box.fontSize,
@@ -106,8 +116,8 @@ export function layoutBalloons(frames, rects) {
     }
 
     frame.dialogos.forEach((d, di) => {
-      const maxWidth = Math.min(360, rect.w - 50);
-      const box = measureBalloon(d.texto, { fontSize: d.tipo === 'GRITO' ? 30 : 25, maxWidth });
+      const maxWidth = Math.min(420, rect.w - 40);
+      const box = measureBalloon(d.texto, { fontSize: d.tipo === 'GRITO' ? CORPO.grito : CORPO.fala, maxWidth });
       const alignRight = di % 2 === 1;
       const x = alignRight ? rect.x + rect.w - box.width - 20 : rect.x + 20;
       const y = Math.min(cursorY, rect.y + rect.h - box.height - 70);
@@ -231,7 +241,7 @@ export function sanitizeBalloons(input) {
     y: clamp(Number(b.y) || 0, -200, PAGE_H + 200),
     w: clamp(Number(b.w) || 160, 0, PAGE_W),
     h: clamp(Number(b.h) || 90, 0, PAGE_H),
-    fontSize: clamp(Number(b.fontSize) || 25, 10, 90),
+    fontSize: clamp(Number(b.fontSize) || CORPO.fala, 10, 90),
     rotate: clamp(Number(b.rotate) || 0, -45, 45),
     tailX: b.tailX === null || b.tailX === undefined ? null : clamp(Number(b.tailX), -200, PAGE_W + 200),
     tailY: b.tailY === null || b.tailY === undefined ? null : clamp(Number(b.tailY), -200, PAGE_H + 200),

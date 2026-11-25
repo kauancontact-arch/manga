@@ -64,8 +64,31 @@ test('a composição é SVG válido com texto acessível', () => {
 
 test('a composição escapa HTML no texto dos balões', () => {
   const svg = renderComposite({ balloons: sanitizeBalloons([{ id: 'b1', type: 'FALA', text: '<script>alert(1)</script>', x: 10, y: 10, w: 200, h: 80 }]), altText: 'x' });
-  assert.ok(!svg.includes('<script>'));
-  assert.ok(svg.includes('&lt;script&gt;'));
+  // A propriedade que importa: nenhuma tag executável sai no SVG, e os sinais
+  // de menor e maior viram entidades. O texto pode ser quebrado em linhas,
+  // então não se afirma nada sobre onde cada pedaço cai.
+  assert.ok(!/<script[\s>]/i.test(svg), 'nenhuma tag script no SVG');
+  assert.ok(svg.includes('&lt;'), 'o sinal de menor foi escapado');
+  assert.ok(!svg.includes('alert(1)</script>'), 'o payload não sai intacto');
+});
+
+test('um balão curto escapa o texto por inteiro', () => {
+  const svg = renderComposite({ balloons: sanitizeBalloons([{ id: 'b1', type: 'FALA', text: '<b>oi</b>', x: 10, y: 10, w: 380, h: 120 }]), altText: 'x' });
+  assert.ok(svg.includes('&lt;b&gt;oi&lt;/b&gt;'));
+  assert.ok(!/<b>/i.test(svg));
+});
+
+test('o corpo do texto fica legível em tela de celular', () => {
+  // A página tem 1000px e é lida a 375px, ou seja, a 0,375 do tamanho.
+  const balloons = layoutBalloons([{
+    id: 'q1', narrador: 'Era para ser um dia comum.',
+    dialogos: [{ texto: 'Boa tarde.', tipo: 'FALA', personagem_id: 'p1' }],
+    efeitos_sonoros: [],
+  }], panelGrid(1));
+  for (const b of balloons) {
+    const noCelular = b.fontSize * (375 / PAGE_W);
+    assert.ok(noCelular >= 10, `${b.type} ficaria com ${noCelular.toFixed(1)}px no celular`);
+  }
 });
 
 test('a edição manual de balões é saneada e limitada', () => {
