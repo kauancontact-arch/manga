@@ -146,7 +146,7 @@ export function catalogPage({ mangas, filters, genres, total }) {
 <section class="section section--paper">
   <div class="wrap">
     <div class="section__head">
-      <div><h1>Catálogo</h1><p>${total} obra(s) publicada(s).</p></div>
+      <div><h1>Catálogo</h1><p>${total === 1 ? '1 obra publicada.' : `${total} obras publicadas.`}</p></div>
     </div>
 
     <form class="card mb-2" method="get" action="/mangas" role="search">

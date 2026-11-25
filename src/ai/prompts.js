@@ -223,7 +223,9 @@ ${visualBible}
 CONCEITO: ${script.capa.conceito || script.sinopse}
 COMPOSIÇÃO: ${script.capa.prompt_visual}
 
-A capa não deve conter nenhum texto, título, logotipo ou assinatura: o lettering é aplicado depois pela editora. Deixe a faixa inferior (cerca de 20% da altura) com composição simples para receber a tarja editorial.`;
+A capa não deve conter nenhum texto, título, logotipo ou assinatura: o lettering é aplicado depois pela editora.
+
+A ilustração precisa ocupar o quadro inteiro, de borda a borda, sem moldura, sem margem branca e sem faixa vazia em cima ou embaixo. A parte de baixo deve ser desenhada como todo o resto, só com composição mais calma, por exemplo fundo, chão ou céu, para que um título possa ser aplicado por cima depois sem cobrir o rosto de ninguém.`;
 }
 
 export function buildCharacterRefPrompt({ character, visualBible }) {
