@@ -698,6 +698,11 @@ export function reviewView({ ctx, manga, submission, pages, approvals, checklist
             ${textArea({ name: 'transcript', label: 'Transcrição dos diálogos', value: balloonPage.transcript || '', rows: 5 })}
             <button class="btn btn--primary" type="submit">Salvar balões</button>
           </form>
+          <form method="post" action="/admin/revisao/${manga.id}/pagina/${balloonPage.id}/refazer-baloes" data-confirm="Refazer o layout substitui as posições e o tamanho do texto desta página pelo cálculo atual. A versão de agora fica no histórico.">
+            ${csrf(ctx)}
+            <button class="btn" type="submit">Refazer layout</button>
+            <p class="hint">Recalcula posição e corpo do texto a partir do roteiro. Não gera arte nem custa nada.</p>
+          </form>
         </div>
         ${history.length ? html`<details class="mt-2"><summary style="cursor:pointer">Histórico de versões desta página</summary>
           <ul class="timeline mt-2">${history.map((h) => html`<li><time>${fmtDateTime(h.created_at)}</time>

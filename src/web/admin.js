@@ -27,7 +27,7 @@ import {
   addEntry, autoFill, createMagazine, getMagazine, listMagazines,
   magazineEntries, publishMagazine, removeEntry, scheduleMagazine,
 } from '../domain/magazines.js';
-import { sanitizeBalloons } from '../domain/balloons.js';
+import { layoutBalloons, panelGrid, sanitizeBalloons } from '../domain/balloons.js';
 import {
   buildScript, buildXCopy, nextPreset, saveSocialScript, socialHistory,
   THEME_PRESETS, WPM_OPTIONS,
@@ -431,6 +431,25 @@ export function registerAdminRoutes(router) {
       transcript: String(ctx.fields.transcript || '').slice(0, 6000),
     }, { note: 'Balões editados', actor: ctx.user.username });
     ctx.flash(`/admin/revisao/${ctx.params.id}?pagina=${ctx.params.pageId}`, 'ok', 'Balões salvos.');
+  }));
+
+  // Recalcula a posição e o corpo dos balões a partir do roteiro salvo, sem
+  // tocar na arte nem gastar geração. Serve para páginas feitas antes de uma
+  // mudança nas regras de layout, como o aumento do corpo para leitura no
+  // celular. A versão anterior fica no histórico e pode ser restaurada.
+  router.post('/admin/revisao/:id/pagina/:pageId/refazer-baloes', requireAdmin((ctx) => {
+    const alvo = getPage(ctx.params.pageId);
+    const volta = `/admin/revisao/${ctx.params.id}?pagina=${ctx.params.pageId}`;
+    if (!alvo || alvo.manga_id !== ctx.params.id) return ctx.flash(`/admin/revisao/${ctx.params.id}`, 'erro', 'Página não encontrada nesta obra.');
+    const roteiro = latestScript(ctx.params.id);
+    const pagina = roteiro?.script?.paginas?.find((p) => p.numero === alvo.page_number);
+    if (!pagina) return ctx.flash(volta, 'erro', 'O roteiro desta página não está mais disponível, então o layout não pode ser recalculado.');
+    const rects = panelGrid(pagina.quadros.length);
+    savePageVersion(alvo.id, {
+      panels_json: JSON.stringify(rects),
+      balloons_json: JSON.stringify(layoutBalloons(pagina.quadros, rects)),
+    }, { note: 'Layout dos balões refeito', actor: ctx.user.username });
+    ctx.flash(volta, 'ok', 'Layout refeito a partir do roteiro. Posições manuais desta página foram substituídas, e a versão anterior continua no histórico.');
   }));
 
   router.post('/admin/revisao/:id/pagina/:pageId/regerar', requireAdmin((ctx) => {
