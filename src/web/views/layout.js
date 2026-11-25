@@ -16,8 +16,8 @@ function brand(href = '/') {
 }
 
 const PUBLIC_NAV = [
-  ['/', 'Inicio'],
-  ['/mangas', 'Mangas'],
+  ['/', 'Início'],
+  ['/mangas', 'Mangás'],
   ['/revistas', 'Revistas'],
   ['/participar', 'Participar'],
   ['/sobre', 'Sobre'],
@@ -28,7 +28,7 @@ const PUBLIC_NAV = [
  */
 export function publicLayout({
   title,
-  description = 'MangaLoop transforma historias reais em mangas originais. Voce conta. A comunidade escolhe. Nos ilustramos.',
+  description = 'MangaLoop transforma histórias reais em mangás originais. Você conta. A comunidade escolhe. Nós ilustramos.',
   body,
   ctx,
   canonical = null,
@@ -41,7 +41,7 @@ export function publicLayout({
   structuredData = null,
 }) {
   const s = allSettings();
-  const fullTitle = title ? `${title} · MangaLoop` : 'MangaLoop · Sua vida pode ser o proximo capitulo.';
+  const fullTitle = title ? `${title} · MangaLoop` : 'MangaLoop · Sua vida pode ser o próximo capítulo.';
   const url = canonical ? `${env.appUrl}${canonical}` : `${env.appUrl}${pathname}`;
   const image = ogImage ? (ogImage.startsWith('http') ? ogImage : `${env.appUrl}${ogImage}`) : `${env.appUrl}/og/padrao.svg`;
 
@@ -76,7 +76,7 @@ ${structuredData ? raw(`<script type="application/ld+json">${JSON.stringify(stru
 </head>
 <body class="${bodyClass}">
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-${demoNotice ? html`<div class="demo-banner" role="status">Conteudo de demonstracao: obras geradas localmente para validar o fluxo, sem chamadas pagas de IA.</div>` : ''}
+${demoNotice ? html`<div class="demo-banner" role="status">Conteúdo de demonstração: obras geradas localmente para validar o fluxo, sem chamadas pagas de IA.</div>` : ''}
 <header class="site-header">
   <div class="wrap site-header__inner">
     ${brand('/')}
@@ -104,7 +104,7 @@ ${body}
       <div>
         <h4>Ler</h4>
         <ul>
-          <li><a href="/mangas">Catalogo de mangas</a></li>
+          <li><a href="/mangas">Catálogo de mangás</a></li>
           <li><a href="/revistas">Revistas semanais</a></li>
           <li><a href="/participar">Como participar</a></li>
         </ul>
@@ -116,7 +116,7 @@ ${body}
           <li><a href="/regras">Regras</a></li>
           <li><a href="/privacidade">Privacidade</a></li>
           <li><a href="/termos">Termos</a></li>
-          <li><a href="/contato">Contato e retirada de conteudo</a></li>
+          <li><a href="/contato">Contato e retirada de conteúdo</a></li>
         </ul>
       </div>
       <div>
@@ -129,8 +129,8 @@ ${body}
       </div>
     </div>
     <div class="footer-legal">
-      <p>Os relatos pertencem a quem os escreveu e sao adaptados com autorizacao. As obras sao adaptacoes ilustradas com apoio de inteligencia artificial, revisadas por pessoas antes da publicacao.</p>
-      <p class="mb-0">© ${new Date().getFullYear()} MangaLoop · <a href="/contato">Pedido de retirada de conteudo</a></p>
+      <p>Os relatos pertencem a quem os escreveu e são adaptados com autorização. As obras são adaptações ilustradas com apoio de inteligência artificial, revisadas por pessoas antes da publicação.</p>
+      <p class="mb-0">© ${new Date().getFullYear()} MangaLoop · <a href="/contato">Pedido de retirada de conteúdo</a></p>
     </div>
   </div>
 </footer>
