@@ -51,11 +51,38 @@
     catch { flash(btn, url); }
   });
 
-  /* Confirmacao explicita de acoes sensiveis */
+  /* Confirmacao explicita de acoes sensiveis.
+     Em vez de window.confirm, que o iOS trata mal e alguns navegadores
+     embutidos descartam sozinhos, a confirmacao aparece dentro da pagina. */
   document.addEventListener('submit', (ev) => {
     const form = ev.target;
     const msg = form.getAttribute('data-confirm');
-    if (msg && !window.confirm(msg)) ev.preventDefault();
+    if (!msg || form.dataset.confirmado === 'sim') return;
+    ev.preventDefault();
+    if (form.querySelector('[data-confirm-box]')) return;
+
+    const caixa = document.createElement('div');
+    caixa.className = 'notice notice--warn mt-2';
+    caixa.setAttribute('data-confirm-box', '');
+    caixa.setAttribute('role', 'alertdialog');
+    caixa.innerHTML =
+      '<p class="mb-0"></p>' +
+      '<div class="row mt-2">' +
+      '<button type="button" class="btn btn--sm btn--primary" data-confirm-yes>Confirmar</button>' +
+      '<button type="button" class="btn btn--sm" data-confirm-no>Cancelar</button>' +
+      '</div>';
+    caixa.querySelector('p').textContent = msg;
+    form.appendChild(caixa);
+
+    const sim = caixa.querySelector('[data-confirm-yes]');
+    sim.focus();
+    sim.addEventListener('click', () => {
+      form.dataset.confirmado = 'sim';
+      caixa.remove();
+      if (typeof form.requestSubmit === 'function') form.requestSubmit();
+      else form.submit();
+    });
+    caixa.querySelector('[data-confirm-no]').addEventListener('click', () => caixa.remove());
   });
 
   /* Contadores de caracteres e palavras */

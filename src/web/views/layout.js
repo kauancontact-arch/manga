@@ -75,7 +75,7 @@ ${noindex ? raw('<meta name="robots" content="noindex, nofollow">') : raw('<meta
 ${structuredData ? raw(`<script type="application/ld+json">${JSON.stringify(structuredData).replace(/</g, '\\u003c')}</script>`) : ''}
 </head>
 <body class="${bodyClass}">
-<a class="skip-link" href="#conteudo">Pular para o conteudo</a>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 ${demoNotice ? html`<div class="demo-banner" role="status">Conteudo de demonstracao: obras geradas localmente para validar o fluxo, sem chamadas pagas de IA.</div>` : ''}
 <header class="site-header">
   <div class="wrap site-header__inner">
@@ -83,7 +83,7 @@ ${demoNotice ? html`<div class="demo-banner" role="status">Conteudo de demonstra
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-principal">
       <span aria-hidden="true">☰</span> Menu
     </button>
-    <nav class="site-nav" id="nav-principal" data-nav aria-label="Navegacao principal">
+    <nav class="site-nav" id="nav-principal" data-nav aria-label="Navegação principal">
       <ul>
         ${PUBLIC_NAV.map(([href, label]) => html`<li><a href="${href}"${raw(pathname === href || (href !== '/' && pathname.startsWith(href)) ? ' aria-current="page"' : '')}>${label}</a></li>`)}
       </ul>
@@ -140,16 +140,16 @@ ${body}
 }
 
 const ADMIN_NAV = [
-  ['/admin', 'Visao geral'],
+  ['/admin', 'Visão geral'],
   ['/admin/desafios', 'Desafios'],
   ['/admin/roteiros-sociais', 'Gerador de roteiros'],
   ['/admin/relatos', 'Relatos vencedores'],
-  ['/admin/estudio', 'Estudio de mangas'],
-  ['/admin/revisao', 'Revisao'],
+  ['/admin/estudio', 'Estúdio de mangás'],
+  ['/admin/revisao', 'Revisão'],
   ['/admin/revistas', 'Revistas'],
   ['/admin/biblioteca', 'Biblioteca'],
   ['/admin/custos', 'Custos'],
-  ['/admin/configuracoes', 'Configuracoes'],
+  ['/admin/configuracoes', 'Configurações'],
 ];
 
 export function adminLayout({ title, body, ctx, pathname = '/admin', subtitle = '', actions = null, flash = null }) {
@@ -170,23 +170,23 @@ export function adminLayout({ title, body, ctx, pathname = '/admin', subtitle = 
 <link rel="stylesheet" href="/estatico/styles.css">
 </head>
 <body>
-<a class="skip-link" href="#admin-conteudo">Pular para o conteudo</a>
+<a class="skip-link" href="#admin-conteudo">Pular para o conteúdo</a>
 <div class="admin">
   <aside class="admin__side">
     ${brand('/admin')}
-    <nav aria-label="Navegacao administrativa">
+    <nav aria-label="Navegação administrativa">
       <ul>
         ${ADMIN_NAV.map(([href, label]) => html`<li><a href="${href}"${raw(isCurrent(pathname, href) ? ' aria-current="page"' : '')}>${label}</a></li>`)}
       </ul>
     </nav>
     <div class="side-foot">
-      <p class="mb-0"><strong style="color:var(--paper)">Modo de IA:</strong> ${mode === 'live' ? 'producao (chamadas pagas)' : 'demonstracao (sem custo)'}</p>
+      <p class="mb-0"><strong style="color:var(--paper)">Modo de IA:</strong> ${mode === 'live' ? 'produção (chamadas pagas)' : 'demonstração (sem custo)'}</p>
       <p class="mb-0">Sessão: ${ctx?.user?.username || 'anônima'}</p>
       <form method="post" action="/admin/sair" style="margin-top:.6rem">
         <input type="hidden" name="_csrf" value="${ctx?.csrf || ''}">
         <button class="btn btn--sm btn--ghost btn--block" type="submit">Sair</button>
       </form>
-      <p style="margin-top:.6rem"><a href="/" target="_blank" rel="noopener">Ver site publico ↗</a></p>
+      <p style="margin-top:.6rem"><a href="/" target="_blank" rel="noopener">Ver site público ↗</a></p>
     </div>
   </aside>
   <div class="admin__main" id="admin-conteudo">
