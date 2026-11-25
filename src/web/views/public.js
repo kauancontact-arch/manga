@@ -1,9 +1,25 @@
 import { html, raw, paragraphs } from '../../core/html.js';
+import { pageLayers } from '../../domain/compose.js';
 import { fmtLongDate } from '../../core/dates.js';
 import { GENRES, label, networkLabel, NETWORKS } from '../../domain/catalog.js';
 import { mangaCredits } from '../../domain/mangas.js';
 
 const genreLabel = (k) => (k ? label(GENRES, k) : null);
+
+
+/** Página do leitor: arte em <img> e balões em SVG por cima. */
+function pageFigure(page, legenda, { eager = false } = {}) {
+  const camadas = pageLayers(page);
+  return html`<figure class="reader__page" data-page>
+    <div class="page-layers">
+      ${camadas.imageUrl
+        ? html`<img src="${camadas.imageUrl}" alt="${camadas.alt}" width="${camadas.width}" height="${camadas.height}" loading="${raw(eager ? 'eager' : 'lazy')}" decoding="async">`
+        : html`<div class="empty-state">Página indisponível</div>`}
+      ${raw(camadas.overlay)}
+    </div>
+    <figcaption>${legenda}</figcaption>
+  </figure>`;
+}
 
 export function mangaCard(manga, { coverUrl = null, featured = false } = {}) {
   return html`<a class="manga-card" href="/mangas/${manga.slug}">
@@ -237,14 +253,8 @@ export function readerPage({ manga, pages, coverPage, transcript, nextManga }) {
   </div>
 
   <div class="reader__stage">
-    ${coverPage ? html`<figure class="reader__page" data-page>
-      <img src="/pagina/${coverPage.id}.svg" alt="${coverPage.alt_text || `Capa de ${manga.title}`}" width="1000" height="1500" loading="eager" decoding="async">
-      <figcaption>Capa</figcaption>
-    </figure>` : ''}
-    ${pages.map((p, i) => html`<figure class="reader__page" data-page>
-      <img src="/pagina/${p.id}.svg" alt="${p.alt_text || `Página ${p.page_number}`}" width="1000" height="1500" loading="${raw(i < 2 ? 'eager' : 'lazy')}" decoding="async">
-      <figcaption>Página ${p.page_number} de ${pages.length}</figcaption>
-    </figure>`)}
+    ${coverPage ? pageFigure(coverPage, 'Capa', { eager: true }) : ''}
+    ${pages.map((p, i) => pageFigure(p, `Página ${p.page_number} de ${pages.length}`, { eager: i < 1 }))}
   </div>
 
   <details class="transcript">
@@ -323,14 +333,8 @@ export function magazineReaderPage({ magazine, blocks }) {
   <div class="reader__progress" data-progress><span></span></div>
   <div class="reader__stage">
     ${blocks.map((block) => html`
-      ${block.cover ? html`<figure class="reader__page" data-page>
-        <img src="/pagina/${block.cover.id}.svg" alt="Capa de ${block.entry.title}" width="1000" height="1500" loading="lazy" decoding="async">
-        <figcaption>${block.entry.title}, relato de ${block.entry.author_pseudonym || 'autor anônimo'} (${networkLabel(block.entry.network)})</figcaption>
-      </figure>` : ''}
-      ${block.pages.map((p) => html`<figure class="reader__page" data-page>
-        <img src="/pagina/${p.id}.svg" alt="${p.alt_text || `Página ${p.page_number} de ${block.entry.title}`}" width="1000" height="1500" loading="lazy" decoding="async">
-        <figcaption>${block.entry.title} · página ${p.page_number}</figcaption>
-      </figure>`)}`)}
+      ${block.cover ? pageFigure(block.cover, `${block.entry.title}, relato de ${block.entry.author_pseudonym || 'autor anônimo'} (${networkLabel(block.entry.network)})`) : ''}
+      ${block.pages.map((p) => pageFigure(p, `${block.entry.title} · página ${p.page_number}`))}`)}
   </div>
   <nav class="reader__nav" aria-label="Navegação de leitura">
     <button class="btn btn--sm" type="button" data-prev>← Anterior</button>

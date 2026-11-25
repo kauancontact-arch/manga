@@ -1,5 +1,5 @@
 import { assetRow, assetUrl, readAsset } from '../core/storage.js';
-import { PAGE_H, PAGE_W, renderComposite } from './balloons.js';
+import { PAGE_H, PAGE_W, renderBalloonLayer, renderComposite } from './balloons.js';
 
 /**
  * Composição de página: arte base (imutável) + camada de balões (editável).
@@ -53,4 +53,23 @@ export async function pageCompositeStandalone(page) {
     height: PAGE_H,
     altText: page.alt_text || `Página ${page.page_number}`,
   });
+}
+
+/**
+ * Página em duas camadas, para a entrega ao leitor.
+ *
+ * Embutir a arte dentro do SVG custa um terço a mais de bytes e impede o
+ * navegador de guardar a imagem em cache. No leitor a arte vai como <img>,
+ * que o navegador guarda e reaproveita, e os balões por cima como SVG.
+ */
+export function pageLayers(page) {
+  const base = page.base_asset_id ? assetRow(page.base_asset_id) : null;
+  return {
+    imageUrl: base ? assetUrl(page.base_asset_id) : null,
+    mime: base?.mime || null,
+    overlay: renderBalloonLayer(pageBalloons(page), { width: PAGE_W, height: PAGE_H }),
+    width: PAGE_W,
+    height: PAGE_H,
+    alt: page.alt_text || `Página ${page.page_number}`,
+  };
 }

@@ -7,8 +7,27 @@ import {
 } from '../../domain/catalog.js';
 import { formatUsd } from '../../domain/costs.js';
 import { assetUrl } from '../../core/assets.js';
+import { pageLayers } from '../../domain/compose.js';
 
 /* ----------------------------- componentes ------------------------------ */
+
+/** Miniatura de página: arte em <img> e balões por cima. */
+export function thumb(page) {
+  const c = pageLayers(page);
+  return html`<span class="page-layers" style="display:block">
+    ${c.imageUrl ? html`<img src="${c.imageUrl}" alt="${c.alt}" loading="lazy" decoding="async">` : ''}
+    ${raw(c.overlay)}
+  </span>`;
+}
+
+/** Prévia grande usada no editor de balões. */
+export function pageStage(page) {
+  const c = pageLayers(page);
+  return html`<div class="page-layers">
+    ${c.imageUrl ? html`<img src="${c.imageUrl}" alt="${c.alt}">` : ''}
+    ${raw(c.overlay)}
+  </div>`;
+}
 
 export function statusChip(map, key) {
   const def = map[key] || { label: key, cls: 'neutral' };
@@ -555,7 +574,7 @@ export function studioView({ ctx, manga, submission, challenge, script, scriptVe
         </form>
         ${pages.length ? html`<div class="page-strip mt-2">
           ${pages.map((p) => html`<div class="page-thumb">
-            <div class="page-thumb__img">${p.status === 'READY' ? html`<img src="/pagina/${p.id}.svg" alt="${p.alt_text || ''}" loading="lazy">` : html`<span class="muted">${p.status === 'FAILED' ? 'falhou' : 'pendente'}</span>`}</div>
+            <div class="page-thumb__img">${p.status === 'READY' ? thumb(p) : html`<span class="muted">${p.status === 'FAILED' ? 'falhou' : 'pendente'}</span>`}</div>
             <div class="page-thumb__bar"><span>${p.kind === 'COVER' ? 'Capa' : `Página ${p.page_number}`}</span>
               <a class="btn btn--sm" href="/admin/revisao/${manga.id}#pagina-${p.id}">Abrir</a></div>
           </div>`)}
@@ -642,7 +661,7 @@ export function reviewView({ ctx, manga, submission, pages, approvals, checklist
       <div class="panel__body">
         <div class="page-strip">
           ${pages.map((p) => html`<div class="page-thumb" id="pagina-${p.id}">
-            <div class="page-thumb__img">${p.status === 'READY' ? html`<img src="/pagina/${p.id}.svg" alt="${p.alt_text || ''}" loading="lazy">` : html`<span class="muted">${p.status}</span>`}</div>
+            <div class="page-thumb__img">${p.status === 'READY' ? thumb(p) : html`<span class="muted">${p.status}</span>`}</div>
             <div class="page-thumb__bar">
               <span>${p.kind === 'COVER' ? 'Capa' : `Pág. ${p.page_number}`} <span class="muted">v${p.version}</span></span>
               <a class="btn btn--sm" href="/admin/revisao/${manga.id}?pagina=${p.id}">Editar</a>
@@ -670,7 +689,7 @@ export function reviewView({ ctx, manga, submission, pages, approvals, checklist
       <div class="panel__body">
         <div class="balloon-editor">
           <div class="balloon-stage">
-            <img src="/pagina/${balloonPage.id}.svg" alt="Prévia da página ${balloonPage.page_number}">
+            ${pageStage(balloonPage)}
           </div>
           <form method="post" action="/admin/revisao/${manga.id}/pagina/${balloonPage.id}/baloes">
             ${csrfField(ctx)}

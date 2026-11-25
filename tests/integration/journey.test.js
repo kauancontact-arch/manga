@@ -219,15 +219,25 @@ test('leitor anônimo lê as obras no celular, sem cadastro', async () => {
     const leitor = await anon(`/mangas/${obra.slug}/ler`);
     assert.equal(leitor.status, 200);
     const leitorHtml = await leitor.text();
-    const paginas = [...leitorHtml.matchAll(/\/pagina\/([a-z0-9]+)\.svg/g)];
-    assert.ok(paginas.length >= 2, 'o leitor lista capa e páginas');
+
+    // A página chega em duas camadas: a arte como <img> cacheável e os
+    // balões como SVG por cima, em vez de um SVG único com a arte embutida.
+    const camadas = [...leitorHtml.matchAll(/class="page-layers"/g)];
+    assert.ok(camadas.length >= 2, 'o leitor monta capa e páginas em camadas');
+    const artes = [...leitorHtml.matchAll(/\/midia\/([a-z0-9]+)/g)];
+    assert.ok(artes.length >= 2, 'cada página aponta para a sua arte');
+    assert.match(leitorHtml, /data-balloon=/, 'a camada de balões vai no HTML');
     assert.match(leitorHtml, /Transcrição acessível/);
 
-    const svg = await anon(`/pagina/${paginas[1][1]}.svg`);
+    const arte = await anon(`/midia/${artes[1][1]}`);
+    assert.equal(arte.status, 200, 'a arte da página é pública depois de publicada');
+
+    // O SVG autocontido continua disponível para exportação e metadados.
+    const pagina = (await import('../../src/domain/mangas.js')).storyPages(obra.id)[0];
+    const svg = await anon(`/pagina/${pagina.id}.svg`);
     assert.equal(svg.status, 200);
     assert.match(svg.headers.get('content-type'), /svg/);
-    const svgBody = await svg.text();
-    assert.match(svgBody, /<title>/, 'a página tem título acessível');
+    assert.match(await svg.text(), /<title>/, 'a página tem título acessível');
   }
 });
 
@@ -289,7 +299,7 @@ test('a revista reúne as três obras e é lida sem cadastro', async () => {
   const leitura = await fetch(`${base}/revistas/${revista.slug}/ler`);
   assert.equal(leitura.status, 200);
   const html = await leitura.text();
-  assert.ok([...html.matchAll(/\/pagina\//g)].length >= 6, 'a revista reúne as páginas das obras');
+  assert.ok([...html.matchAll(/class="page-layers"/g)].length >= 6, 'a revista reúne as páginas das obras');
 });
 
 test('logout encerra a sessão', async () => {

@@ -193,6 +193,11 @@ function extractResponsesText(body) {
  * para os valores aceitos pelo modelo configurado.
  */
 export async function generateImage({ prompt, size = '1024x1536', quality = 'low', referenceImages = [] }) {
+  // WebP corta a página de alguns megabytes para algumas centenas de KB, o que
+  // muda a experiência de leitura no celular. Se o modelo não aceitar o
+  // parâmetro, a chamada é repetida sem ele e o retorno volta a ser PNG.
+  const formato = (process.env.OPENAI_IMAGE_FORMAT || 'webp').toLowerCase();
+  const compressao = Number(process.env.OPENAI_IMAGE_COMPRESSION || 82);
   const payload = {
     model: env.openai.imageModel,
     prompt,
@@ -200,12 +205,28 @@ export async function generateImage({ prompt, size = '1024x1536', quality = 'low
     quality,
     n: 1,
   };
+  if (formato && formato !== 'png') {
+    payload.output_format = formato;
+    if (['webp', 'jpeg'].includes(formato) && Number.isFinite(compressao)) {
+      payload.output_compression = Math.max(1, Math.min(100, compressao));
+    }
+  }
   // Entrada de imagem (referência de personagem) só é enviada quando suportada.
   if (referenceImages.length && process.env.OPENAI_IMAGE_SUPPORTS_REFERENCE === 'true') {
     payload.image = referenceImages;
   }
 
-  const body = await request('/images/generations', payload, { timeoutMs: 180000 });
+  let body;
+  try {
+    body = await request('/images/generations', payload, { timeoutMs: 180000 });
+  } catch (err) {
+    const recusouFormato = err instanceof OpenAiError && err.status === 400 && payload.output_format;
+    if (!recusouFormato) throw err;
+    console.warn(`[openai] formato ${payload.output_format} recusado (${err.message}); repetindo em PNG.`);
+    delete payload.output_format;
+    delete payload.output_compression;
+    body = await request('/images/generations', payload, { timeoutMs: 180000 });
+  }
   const first = body?.data?.[0];
   if (!first?.b64_json && !first?.url) {
     throw new OpenAiError('A API não retornou imagem utilizável.', { status: 502, body });
@@ -225,16 +246,17 @@ export async function generateImage({ prompt, size = '1024x1536', quality = 'low
     buffer = Buffer.from(await res.arrayBuffer());
   }
 
+  const mime = ({ webp: 'image/webp', jpeg: 'image/jpeg', png: 'image/png' })[payload.output_format || 'png'] || 'image/png';
   return {
     buffer,
-    mime: 'image/png',
+    mime,
     model: body?.model ?? env.openai.imageModel,
     usage: {
       images: 1,
       input: body?.usage?.input_tokens ?? null,
       output: body?.usage?.output_tokens ?? null,
     },
-    raw: { created: body?.created, size, quality },
+    raw: { created: body?.created, size, quality, format: payload.output_format || 'png' },
   };
 }
 
