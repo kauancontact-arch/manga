@@ -3,7 +3,7 @@ import { fmtDateTime, utcToEditorialLocal, EDITORIAL_TZ } from '../../core/dates
 import {
   ART_STYLES, CHALLENGE_STATUSES, COLOR_MODES, FIDELITY_LEVELS, FORMATS, GENRES,
   HUMOR_LEVELS, MAGAZINE_STATUSES, MANGA_STATUSES, NARRATIVE_TONES, NETWORKS,
-  PANEL_DENSITIES, QUALITY_MODES, SUBMISSION_STATUSES, VISUAL_TONES, label, networkLabel,
+  PAGINAS, PANEL_DENSITIES, QUALITY_MODES, SUBMISSION_STATUSES, VISUAL_TONES, label, networkLabel,
 } from '../../domain/catalog.js';
 import { formatUsd } from '../../domain/costs.js';
 import { assetUrl } from '../../core/assets.js';
@@ -630,8 +630,8 @@ export function studioView({ ctx, manga, submission, challenge, script, scriptVe
           ${selectField({ name: 'format', label: 'Formato', value: manga.format, options: FORMATS })}
         </div>
         <div class="field-row">
-          ${textField({ name: 'page_min', label: 'Páginas (mín.)', value: manga.page_min, type: 'number', attrs: ' min="1" max="8"' })}
-          ${textField({ name: 'page_max', label: 'Páginas (máx.)', value: manga.page_max, type: 'number', attrs: ' min="1" max="8"' })}
+          ${textField({ name: 'page_min', label: 'Páginas (mín.)', value: manga.page_min, type: 'number', attrs: ` min="${PAGINAS.min}" max="${PAGINAS.max}"` })}
+          ${textField({ name: 'page_max', label: 'Páginas (máx.)', value: manga.page_max, type: 'number', attrs: ` min="${PAGINAS.min}" max="${PAGINAS.max}"` })}
         </div>
         <p class="field-label">Estilo de arte</p>
         ${styleCards(manga.art_style)}

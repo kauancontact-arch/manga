@@ -1,4 +1,5 @@
 import { z, ValidationError } from '../core/schema.js';
+import { PAGINAS } from './catalog.js';
 
 /**
  * Roteiro de capítulo — contrato entre a geração textual e o restante do pipeline.
@@ -48,7 +49,7 @@ const frameSchema = z.object({
 });
 
 const pageSchema = z.object({
-  numero: z.int({ min: 1, max: 12 }),
+  numero: z.int({ min: PAGINAS.min, max: PAGINAS.max }),
   resumo: z.string({ max: 400 }).default(''),
   alt_text: z.string({ min: 5, max: 600 }),
   quadros: z.array(frameSchema, { min: 1, max: 8 }),
@@ -68,10 +69,10 @@ export const scriptSchema = z.object({
   tom_visual: z.string({ max: 40 }).default(''),
   fatos_preservados: z.array(z.string({ max: 300 }), { max: 20 }).default([]),
   elementos_ficcionalizados: z.array(z.string({ max: 300 }), { max: 20 }).default([]),
-  quantidade_paginas: z.int({ min: 1, max: 12 }),
+  quantidade_paginas: z.int({ min: PAGINAS.min, max: PAGINAS.max }),
   personagens: z.array(characterSchema, { min: 1, max: 8 }),
   cenarios: z.array(sceneSchema, { max: 8 }).default([]),
-  paginas: z.array(pageSchema, { min: 1, max: 12 }),
+  paginas: z.array(pageSchema, { min: PAGINAS.min, max: PAGINAS.max }),
   capa: coverSchema,
 });
 
@@ -157,7 +158,7 @@ export function normalizeScript(rawInput, { maxPages = 8 } = {}) {
 }
 
 /** Valida e devolve o roteiro normalizado, ou lança ValidationError. */
-export function parseScript(raw, { maxPages = 8, minPages = 1 } = {}) {
+export function parseScript(raw, { maxPages = PAGINAS.max, minPages = PAGINAS.min } = {}) {
   const normalized = normalizeScript(raw, { maxPages });
   const parsed = scriptSchema.parse(normalized);
   const issues = [];

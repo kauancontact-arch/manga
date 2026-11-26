@@ -4,7 +4,7 @@ import { z } from '../core/schema.js';
 import { uniqueSlug } from '../core/slug.js';
 import { editorialLocalToUtc } from '../core/dates.js';
 import { promoteAssetToPublic } from '../core/storage.js';
-import { qualityMode } from './catalog.js';
+import { PAGINAS, qualityMode } from './catalog.js';
 import { publicationGuard } from './safety.js';
 import { countFrames, parseScript, scriptTranscript } from './script.js';
 import { cancelPendingForManga } from './jobs.js';
@@ -50,8 +50,8 @@ export const mangaParamsSchema = z.object({
   fidelity: z.enum(['ALTA', 'ADAPTACAO']).default('ALTA'),
   color_mode: z.enum(['PB', 'DUOTONE', 'COLORIDO']).default('PB'),
   panel_density: z.enum(['BAIXA', 'MEDIA', 'ALTA']).default('MEDIA'),
-  page_min: z.int({ min: 1, max: 12 }).default(4),
-  page_max: z.int({ min: 1, max: 12 }).default(6),
+  page_min: z.int({ min: PAGINAS.min, max: PAGINAS.max }).default(4),
+  page_max: z.int({ min: PAGINAS.min, max: PAGINAS.max }).default(6),
   format: z.enum(['VERTICAL', 'PAGINA']).default('VERTICAL'),
   language: z.string({ max: 10 }).default('pt-BR'),
   quality_mode: z.enum(['ECONOMICO', 'EQUILIBRADO', 'PREMIUM']).default('ECONOMICO'),
@@ -113,7 +113,7 @@ export function createMangaFromSubmission(submissionId, params = {}, { actor = '
     challenge_id: submission.challenge_id,
     submission_id: submissionId,
     page_min: data.page_min ?? mode.pages[0],
-    page_max: Math.min(data.page_max ?? mode.pages[1], 8),
+    page_max: Math.min(data.page_max ?? mode.pages[1], PAGINAS.max),
     status: 'RECEIVED',
     is_demo: submission.is_demo ? 1 : 0,
     credits_json: JSON.stringify({

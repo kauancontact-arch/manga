@@ -90,10 +90,26 @@ export const FORMATS = [
  * Modos de qualidade. São políticas internas do produto; os valores reais de
  * parâmetro da API são resolvidos em src/ai/openai.js conforme o modelo configurado.
  */
+/**
+ * Limite de páginas de uma obra. Fica aqui, num lugar só, porque antes o
+ * número 8 estava escrito solto no schema, na criação da obra, no pedido de
+ * roteiro, na validação do roteiro e no formulário, e eles divergiram: o
+ * schema aceitava 12, o resto cortava em 8 sem avisar.
+ */
+export const PAGINAS = { min: 1, max: 20 };
+
+/** Prende um número de páginas dentro de PAGINAS. Valor inválido cai no mínimo. */
+export const clampPaginas = (n) => Math.min(Math.max(Math.trunc(Number(n)) || PAGINAS.min, PAGINAS.min), PAGINAS.max);
+
+/**
+ * O par `pages` é a sugestão de cada modo, usada como padrão quando a obra
+ * ainda não tem faixa escolhida. Ele não limita: quem manda é o page_min e o
+ * page_max da obra, dentro de PAGINAS.
+ */
 export const QUALITY_MODES = [
-  { key: 'ECONOMICO', label: 'Econômico', pages: [2, 4], imageQuality: 'low', colorHint: 'PB', allowCharacterRef: false, desc: 'P&B, 2 a 4 páginas, qualidade econômica. Menor custo por obra.' },
-  { key: 'EQUILIBRADO', label: 'Equilibrado', pages: [4, 6], imageQuality: 'medium', colorHint: null, allowCharacterRef: true, desc: '4 a 6 páginas, qualidade intermediária, referência de personagem opcional.' },
-  { key: 'PREMIUM', label: 'Premium', pages: [6, 8], imageQuality: 'high', colorHint: null, allowCharacterRef: true, desc: 'Até 8 páginas, qualidade superior e referências de personagem.' },
+  { key: 'ECONOMICO', label: 'Econômico', pages: [2, 4], imageQuality: 'low', colorHint: 'PB', allowCharacterRef: false, desc: 'P&B, qualidade econômica, sugere 2 a 4 páginas. Menor custo por página.' },
+  { key: 'EQUILIBRADO', label: 'Equilibrado', pages: [4, 6], imageQuality: 'medium', colorHint: null, allowCharacterRef: true, desc: 'Qualidade intermediária, sugere 4 a 6 páginas, referência de personagem opcional.' },
+  { key: 'PREMIUM', label: 'Premium', pages: [6, 8], imageQuality: 'high', colorHint: null, allowCharacterRef: true, desc: 'Qualidade superior e referências de personagem, sugere 6 a 8 páginas.' },
 ];
 export const qualityMode = (k) => QUALITY_MODES.find((q) => q.key === k) || QUALITY_MODES[0];
 

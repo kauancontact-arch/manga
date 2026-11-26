@@ -4,7 +4,7 @@ import { get, insert, nowIso, run, update } from '../core/db.js';
 import { stableHash } from '../core/ids.js';
 import { putAsset } from '../core/storage.js';
 import { layoutBalloons, panelGrid, PAGE_H, PAGE_W } from '../domain/balloons.js';
-import { qualityMode } from '../domain/catalog.js';
+import { clampPaginas, qualityMode } from '../domain/catalog.js';
 import { budgetGate, estimateGeneration, recordUsage } from '../domain/costs.js';
 import { completeJob, enqueue, failJob, setProgress } from '../domain/jobs.js';
 import {
@@ -63,6 +63,19 @@ export function startScriptGeneration(mangaId, { actor = 'admin', confirmedUnkno
     version: (latestScript(mangaId)?.version ?? 0) + 1,
   });
   return { job, reused, estimate };
+}
+
+/**
+ * Teto de saída do modelo para um roteiro, em tokens.
+ *
+ * Era fixo em 6000, o que bastava para as 4 páginas que o produto permitia e
+ * truncava o JSON a partir de uma dúzia: a resposta vinha cortada no meio, a
+ * validação recusava e o job morria depois do retry. Cada página custa perto
+ * de 1200 tokens entre quadros, ação, prompt visual e diálogos, e o resto
+ * cobre personagens, cenários e o invólucro.
+ */
+export function scriptTokenBudget(maxPages) {
+  return Math.min(3000 + clampPaginas(maxPages) * 1400, 32000);
 }
 
 /** Enfileira as imagens: uma chamada por página + capa (modo econômico). */
@@ -201,8 +214,11 @@ async function runScriptJob(job) {
   setProgress(job.id, 15, { label: 'montando o prompt' });
 
   const mode = qualityMode(manga.quality_mode);
-  const minPages = Math.max(1, Math.min(manga.page_min, mode.pages[0]));
-  const maxPages = Math.min(manga.page_max, mode.pages[1], 8);
+  // A faixa pedida na obra é a que vale. Antes o modo de qualidade cortava os
+  // dois lados: pedir 4 a 20 no modo Econômico virava 2 a 4, e nenhum modo
+  // passava de 8. O modo escolhe a qualidade da imagem, não o tamanho da obra.
+  const maxPages = clampPaginas(manga.page_max);
+  const minPages = Math.min(clampPaginas(manga.page_min), maxPages);
 
   let script;
   let model = 'demo-local';
@@ -219,6 +235,7 @@ async function runScriptJob(job) {
       const res = await generateScript({
         systemPrompt: SCRIPT_SYSTEM_PROMPT,
         userPrompt: attempt === 1 ? userPrompt : `${userPrompt}\n\nATENÇÃO: a resposta anterior era inválida (${lastError}). Responda somente com o JSON exigido.`,
+        maxOutputTokens: scriptTokenBudget(maxPages),
       });
       model = res.model;
       usage = res.usage;
