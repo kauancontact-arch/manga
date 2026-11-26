@@ -42,7 +42,7 @@ export function buildScriptUserPrompt({
 - Fidelidade: ${fiction ? 'adaptação criativa (marque claramente o que foi ficcionalizado)' : 'alta fidelidade ao relato'}
 - Cor: ${manga.color_mode}
 - Densidade de quadros por página: ${density.min} a ${density.max}
-- Páginas de história: entre ${minPages} e ${maxPages} (decida o número necessário; modo ${mode.label})
+- Páginas de história: entre ${minPages} e ${maxPages}. Escolha o número pelo que o relato pede: use o mínimo só quando a história for mesmo curta, e aproveite a faixa quando houver material para desenvolver cena, reação e desfecho sem encher linguiça. Modo ${mode.label}.
 - Idioma de todos os textos: ${manga.language}
 - Rede vencedora: ${submission.network}
 - Tipo de história: ${submission.is_fiction ? 'ficção assumida pelo autor' : 'relato real'}
@@ -62,7 +62,7 @@ FORMATO DE SAÍDA (JSON estrito)
   "tom_visual": "${manga.visual_tone || ''}",
   "fatos_preservados": ["string"],
   "elementos_ficcionalizados": ["string"],
-  "quantidade_paginas": ${minPages},
+  "quantidade_paginas": <inteiro entre ${minPages} e ${maxPages}>,
   "personagens": [{"id":"p1","nome":"string","papel":"protagonista","descricao":"aparência detalhada e constante","roupa":"string","proporcoes":"string","acessorios":"string","paleta":"string","regras_traco":"string"}],
   "cenarios": [{"id":"c1","nome":"string","descricao":"string"}],
   "paginas": [{

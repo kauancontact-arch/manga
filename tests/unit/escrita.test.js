@@ -37,3 +37,19 @@ test('o prompt proíbe travessão no conteúdo gerado pela IA', () => {
   assert.match(SCRIPT_SYSTEM_PROMPT, /NUNCA use travessão/);
   assert.ok(SCRIPT_SYSTEM_PROMPT.includes(TRAVESSAO), 'a regra precisa mostrar o caractere ao modelo');
 });
+
+test('o esqueleto do roteiro não sugere o mínimo de páginas', async () => {
+  const { buildScriptUserPrompt } = await import('../../src/ai/prompts.js');
+  const prompt = buildScriptUserPrompt({
+    submission: { raw_text: 'um relato qualquer', network: 'X', is_fiction: 0 },
+    manga: {
+      genre: 'COMEDIA', narrative_tone: 'HUMOR_COTIDIANO', visual_tone: 'EXPRESSIVO',
+      art_style: 'MANGA_CLASSICO', quality_mode: 'PREMIUM', color_mode: 'PB',
+      panel_density: 'MEDIA', humor_intensity: 'MEDIA', language: 'pt-BR', fidelity: 'ALTA',
+    },
+    challenge: { theme: 'tema' }, minPages: 4, maxPages: 20,
+  });
+  // O exemplo trazia "quantidade_paginas": 4 e o modelo copiava o mínimo.
+  assert.ok(!/"quantidade_paginas":\s*4\s*,/.test(prompt), 'o exemplo não traz um número fixo');
+  assert.ok(prompt.includes('entre 4 e 20'), 'a faixa aparece');
+});
