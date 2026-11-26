@@ -24,6 +24,12 @@ const manga = {
   quality_mode: 'PADRAO', author_pseudonym: 'Autora',
 };
 
+const estimativa = {
+  known: true, aiMode: 'live', pages: 4, includeCover: true, characterRefs: 0,
+  imageQuality: 'low', calls: { text: 1, image: 5 },
+  textCostUsd: 0.02, imageCostUsd: 0.2, totalUsd: 0.22, total: 0.22, items: [],
+};
+
 const submission = { id: 's1', author_pseudonym: 'Autora', raw_text: 'Relato', network: 'INSTAGRAM', permalink: '' };
 
 test('a tela de revisão renderiza com o editor de balões aberto', () => {
@@ -51,4 +57,36 @@ test('a tela de revisão renderiza sem o editor aberto', () => {
   }));
   assert.ok(out.includes('Sinopse preenchida'), 'o checklist foi renderizado');
   assert.ok(!out.includes('refazer-baloes'), 'sem página escolhida, não há o que refazer');
+});
+
+test('o estúdio mostra o erro de uma tarefa que falhou', () => {
+  const out = String(A.studioView({
+    ctx, manga: { ...manga, status: 'DRAFT', page_min: 3, page_max: 6 },
+    submission, challenge: { edition_number: 1 },
+    script: null, scriptVersions: [],
+    estimate: estimativa,
+    jobSummary: {
+      active: false, progress: 100, failed: 1, done: true,
+      label: '1 tarefa(s) falharam.',
+      jobs: [{ type: 'SCRIPT', status: 'FAILED', attempts: 3, max_attempts: 3, error_message: 'A API devolveu 429.' }],
+    },
+    pages: [], approvals: {}, aiStatus: { mode: 'live', blockers: [] },
+  }));
+  assert.ok(out.includes('Uma tarefa falhou'), 'o aviso aparece');
+  assert.ok(out.includes('A API devolveu 429.'), 'o motivo do erro aparece');
+  assert.ok(out.includes('Roteiro:'), 'o tipo da tarefa aparece em português');
+  assert.ok(out.includes('Gerar roteiro'), 'o botão de gerar continua disponível');
+});
+
+test('o estúdio sem falhas não mostra o aviso', () => {
+  const out = String(A.studioView({
+    ctx, manga: { ...manga, status: 'DRAFT', page_min: 3, page_max: 6 },
+    submission, challenge: { edition_number: 1 },
+    script: null, scriptVersions: [],
+    estimate: estimativa,
+    jobSummary: { active: false, progress: 100, failed: 0, done: true, label: 'Sem tarefas pendentes.' },
+    pages: [], approvals: {}, aiStatus: { mode: 'live', blockers: [] },
+  }));
+  assert.ok(!out.includes('tarefa falhou'));
+  assert.ok(!out.includes('tarefas falharam'));
 });

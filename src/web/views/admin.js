@@ -8,6 +8,7 @@ import {
 import { formatUsd } from '../../domain/costs.js';
 import { assetUrl } from '../../core/assets.js';
 import { pageLayers } from '../../domain/compose.js';
+import { jobLabel } from '../../domain/jobs.js';
 
 /* ----------------------------- componentes ------------------------------ */
 
@@ -507,6 +508,17 @@ export function studioView({ ctx, manga, submission, challenge, script, scriptVe
 
     ${manga.status === 'FAILED' ? html`<div class="notice notice--warn">
       <h3>A produção falhou</h3><p class="mb-0">${manga.failure_reason || 'Erro não detalhado.'} Corrija o que for necessário e tente de novo: as páginas já prontas são preservadas.</p>
+    </div>` : ''}
+
+    ${jobSummary.failed ? html`<div class="notice notice--warn">
+      <h3>${jobSummary.failed === 1 ? 'Uma tarefa falhou' : `${jobSummary.failed} tarefas falharam`}</h3>
+      <ul class="mb-0">
+        ${(jobSummary.jobs || []).filter((j) => j.status === 'FAILED').map((j) => html`<li>
+          <strong>${jobLabel(j.type)}:</strong> ${j.error_message || 'Erro não detalhado.'}
+          <span class="muted"> (${j.attempts} de ${j.max_attempts} tentativas)</span>
+        </li>`)}
+      </ul>
+      <p class="mb-0 mt-2 muted">Gerar de novo apaga a tarefa que falhou e começa uma nova.</p>
     </div>` : ''}
 
     <div class="panel">

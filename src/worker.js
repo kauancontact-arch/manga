@@ -34,7 +34,12 @@ export async function tick() {
         const fatal = err?.fatal === true;
         const after = failJob(job.id, err, { fatal });
         if (job.page_id) update('pages', job.page_id, { status: 'FAILED', failure_reason: String(err.message).slice(0, 400) });
-        if (fatal && job.manga_id && after?.status === 'FAILED' && job.type === 'SCRIPT') {
+        // Um job de roteiro que esgota as tentativas precisa aparecer na obra.
+        // Antes isso só valia para erro fatal, então uma falha que passou pelo
+        // retry (limite de taxa, timeout, resposta fora do schema) deixava o
+        // estúdio mostrando "nenhum roteiro gerado", sem erro em lugar nenhum:
+        // de fora parecia que a geração nunca tinha acontecido.
+        if (job.manga_id && after?.status === 'FAILED' && job.type === 'SCRIPT') {
           update('mangas', job.manga_id, { status: 'FAILED', failure_reason: String(err.message).slice(0, 400) });
         }
       }
