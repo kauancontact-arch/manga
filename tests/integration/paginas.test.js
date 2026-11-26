@@ -44,3 +44,23 @@ test('acima do teto a obra recusa em vez de cortar calada', async () => {
   const { manga } = await seedWinner({ edition: 3, network: 'X', pseudonym: 'Acima' });
   assert.throws(() => M.updateMangaParams(manga.id, { page_max: 40 }, { actor: 'teste' }));
 });
+
+test('uma falha superada por um sucesso posterior some do resumo', async () => {
+  const { insert } = await import('../../src/core/db.js');
+  const { mangaJobSummary } = await import('../../src/domain/jobs.js');
+  const { manga } = await seedWinner({ edition: 4, network: 'INSTAGRAM', pseudonym: 'Superada' });
+
+  insert('generation_jobs', {
+    type: 'SCRIPT', manga_id: manga.id, status: 'FAILED', idempotency_key: `k-falha-${manga.id}`,
+    params_json: '{}', max_attempts: 3, attempts: 3, error_message: 'JSON inválido',
+    created_at: '2026-11-25T20:00:00.000Z',
+  });
+  assert.equal(mangaJobSummary(manga.id).failed, 1, 'a falha aparece enquanto nada deu certo');
+
+  insert('generation_jobs', {
+    type: 'SCRIPT', manga_id: manga.id, status: 'SUCCEEDED', idempotency_key: `k-ok-${manga.id}`,
+    params_json: '{}', max_attempts: 3, attempts: 1,
+    created_at: '2026-11-26T04:50:00.000Z',
+  });
+  assert.equal(mangaJobSummary(manga.id).failed, 0, 'depois do sucesso a falha antiga some');
+});

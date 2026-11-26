@@ -162,7 +162,21 @@ export function cancelPendingForManga(mangaId, { actor = 'admin' } = {}) {
 
 /** Resumo para a interface: progresso agregado dos jobs de uma obra. */
 export function mangaJobSummary(mangaId) {
-  const jobs = all("SELECT * FROM generation_jobs WHERE manga_id = ? AND status IN ('QUEUED','RUNNING','FAILED') ORDER BY created_at", [mangaId]);
+  const rows = all("SELECT * FROM generation_jobs WHERE manga_id = ? AND status IN ('QUEUED','RUNNING','FAILED','SUCCEEDED') ORDER BY created_at", [mangaId]);
+
+  // Uma falha que já foi superada não é mais notícia: se uma tentativa
+  // posterior do mesmo tipo deu certo, o erro antigo some. Sem isso o estúdio
+  // mostrava "o modelo não devolveu um roteiro válido" ao lado do roteiro
+  // pronto, porque a tentativa que falhou continua na tabela.
+  const ultimoSucesso = new Map();
+  for (const j of rows) if (j.status === 'SUCCEEDED') ultimoSucesso.set(j.type, j.created_at);
+  const jobs = rows.filter((j) => {
+    if (j.status === 'SUCCEEDED') return false;
+    if (j.status !== 'FAILED') return true;
+    const sucesso = ultimoSucesso.get(j.type);
+    return !(sucesso && sucesso >= j.created_at);
+  });
+
   if (!jobs.length) return { active: false, progress: 100, label: 'Sem tarefas pendentes.', failed: 0, done: true };
   const failed = jobs.filter((j) => j.status === 'FAILED');
   const working = jobs.filter((j) => j.status !== 'FAILED');
@@ -171,7 +185,7 @@ export function mangaJobSummary(mangaId) {
     : 100;
   const current = working.find((j) => j.status === 'RUNNING') || working[0];
   const label = failed.length && !working.length
-    ? `${failed.length} tarefa(s) falharam.`
+    ? (failed.length === 1 ? 'Uma tarefa falhou.' : `${failed.length} tarefas falharam.`)
     : current
       ? `${jobLabel(current.type)}: ${safeParse(current.result_json)?.label || current.status.toLowerCase()}`
       : 'Concluído.';
