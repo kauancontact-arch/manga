@@ -114,6 +114,16 @@ export async function checkConnection() {
  * json_object e, por último, texto livre (o prompt já exige JSON puro).
  * Assim um modelo que não aceite um desses modos não derruba a geração.
  */
+/**
+ * Tempo de espera de um roteiro, em milissegundos.
+ *
+ * Era fixo em 120000, o que bastava para 4 páginas e estourava a partir de
+ * uma dúzia: o modelo ainda estava escrevendo quando a conexão era cortada, e
+ * as três tentativas morriam no mesmo ponto. Cresce junto com o teto de saída,
+ * porque é ele que diz quanto texto ainda falta vir.
+ */
+export const scriptTimeoutMs = (maxOutputTokens) => Math.min(120000 + Math.max(0, maxOutputTokens - 6000) * 14, 540000);
+
 export async function generateScript({ systemPrompt, userPrompt, maxOutputTokens = 6000 }) {
   const api = (process.env.OPENAI_TEXT_API || 'responses').toLowerCase();
   const model = env.openai.textModel;
@@ -137,7 +147,7 @@ export async function generateScript({ systemPrompt, userPrompt, maxOutputTokens
           max_completion_tokens: maxOutputTokens,
         };
         if (formato.chat) payload.response_format = formato.chat;
-        const body = await request('/chat/completions', payload);
+        const body = await request('/chat/completions', payload, { timeoutMs: scriptTimeoutMs(maxOutputTokens) });
         return {
           text: body?.choices?.[0]?.message?.content ?? '',
           model: body?.model ?? model,
@@ -156,7 +166,7 @@ export async function generateScript({ systemPrompt, userPrompt, maxOutputTokens
         max_output_tokens: maxOutputTokens,
       };
       if (formato.responses) payload.text = formato.responses;
-      const body = await request('/responses', payload);
+      const body = await request('/responses', payload, { timeoutMs: scriptTimeoutMs(maxOutputTokens) });
       return {
         text: extractResponsesText(body),
         model: body?.model ?? model,

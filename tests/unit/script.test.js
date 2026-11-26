@@ -9,3 +9,13 @@ test('o teto de saída do roteiro acompanha o número de páginas', async () => 
   assert.ok(scriptTokenBudget(20) <= 32000);
   assert.equal(scriptTokenBudget(999), scriptTokenBudget(20), 'acima do limite de páginas não cresce mais');
 });
+
+test('o tempo de espera do roteiro acompanha o teto de saída', async () => {
+  const { scriptTimeoutMs } = await import('../../src/ai/openai.js');
+  const { scriptTokenBudget } = await import('../../src/ai/pipeline.js');
+  // Quanto maior o roteiro, mais tempo o modelo leva escrevendo.
+  assert.ok(scriptTimeoutMs(6000) >= 120000, 'o piso é o tempo de antes');
+  assert.ok(scriptTimeoutMs(scriptTokenBudget(20)) > scriptTimeoutMs(scriptTokenBudget(4)));
+  assert.ok(scriptTimeoutMs(scriptTokenBudget(20)) > 5 * 60 * 1000, 'passa de cinco minutos');
+  assert.ok(scriptTimeoutMs(999999) <= 540000, 'tem um teto');
+});
